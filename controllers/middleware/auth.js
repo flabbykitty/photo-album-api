@@ -34,7 +34,7 @@ const basic = async (req, res, next) => {
         return
     }
 
-    req.use = user
+    req.user = user
     next()
 }
 

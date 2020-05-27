@@ -2,35 +2,54 @@
  * Photo controller
  */
 
-const {Photo} = require('../models');
+const {User} = require('../models');
 
 
 /**
  * Show all the photos
  */
 const index = async (req, res) => {
-    const all_photos = await Photo.fetchAll()
-    res.send({
-        status: 'success',
-        data: {
-            photos: all_photos
-        }
-    })
+	let user = null
+	try {
+		user = await new User({id: req.user.id}).fetch({withRelated: 'photos'})
+	} catch(error) {
+		res.status(404)
+		return
+    }
+    
+	const photos = user.related('photos')
+
+	res.send({
+		status: "success",
+		data: {
+			photos
+		},
+	})
 }
 
 /**
  * Show a specific photo
  */
 const show = async (req, res) => {
-    const photo = await new Photo({id: req.params.photoId}).fetch()
+	let user = null
+	try {
+		user = await new User({id: req.user.id}).fetch({withRelated: 'photos'})
+	} catch(error) {
+		res.status(404)
+		return
+	}
 
-    res.send({
-        status: 'success',
-        data: {
-            photo
-        }
-    })
+    const photos = await user.related('photos').where({id:req.params.photoId}).fetch()
+
+	res.send({
+		status: "success",
+		data: {
+			photos
+		},
+	})
 }
+
+
 
 /**
  * Add a new photo

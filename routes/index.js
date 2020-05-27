@@ -14,11 +14,12 @@ router.get('/', (req, res) => {
 	res.send({status: 'This is my inlämningsuppgift'})
 })
 
+router.post('/register', [createRules], userController.register)
+
 router.use(auth.basic)
 
 router.use('/photos', require('./photos_routes'))
 router.use('/albums', require('./albums_routes'))
 
-router.post('/register', [createRules], userController.register)
 
 module.exports = router;

@@ -16,12 +16,12 @@ const knex = require('knex')({
 const bookshelf = require('bookshelf')(knex)
 
 const Photo = require('./Photo')(bookshelf)
-// const Album = require('./Album')(bookshelf)
+const Album = require('./Album')(bookshelf)
 const User = require('./User')(bookshelf)
 
 module.exports = {
     bookshelf,
-    // Album,
+    Album,
     Photo,
     User
 }
