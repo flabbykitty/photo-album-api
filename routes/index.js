@@ -2,8 +2,11 @@
  * Index routes
  */
 
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+
+const {createRules} = require('../validation/user_validation')
+const userController = require('../controllers/user_controller')
 
 /* GET home page */
 router.get('/', (req, res) => {
@@ -13,6 +16,6 @@ router.get('/', (req, res) => {
 router.use('/photos', require('./photos_routes'))
 router.use('/albums', require('./albums_routes'))
 
-// router.post('/register')
+router.post('/register', [createRules], userController.register)
 
 module.exports = router;

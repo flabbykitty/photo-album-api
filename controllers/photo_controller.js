@@ -19,7 +19,7 @@ const index = async (req, res) => {
 }
 
 /**
- * Show a specifit photo
+ * Show a specific photo
  */
 const show = async (req, res) => {
     const photo = await new Photo({id: req.params.photoId}).fetch()
