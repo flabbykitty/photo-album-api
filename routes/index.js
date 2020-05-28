@@ -5,7 +5,7 @@
 const express = require('express');
 const router = express.Router();
 
-const {createRules} = require('../validation/user_validation')
+const {createUserRules} = require('../validation/validation')
 const userController = require('../controllers/user_controller')
 const auth = require('../controllers/middleware/auth')
 
@@ -14,7 +14,7 @@ router.get('/', (req, res) => {
 	res.send({status: 'This is my inlämningsuppgift'})
 })
 
-router.post('/register', [createRules], userController.register)
+router.post('/register', [createUserRules], userController.register)
 
 router.use(auth.basic)
 
