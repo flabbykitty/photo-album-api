@@ -5,6 +5,8 @@
 const express = require('express')
 const router = express.Router()
 
+const {newPhotoRules} = require('../validation/photo_validation')
+
 const {index, show, store} = require('../controllers/photo_controller')
 
 /**
@@ -33,6 +35,6 @@ router.get('/:photoId', show)
  * 
  */
 
-router.post('/', store)
+router.post('/', newPhotoRules, store)
 
  module.exports = router
