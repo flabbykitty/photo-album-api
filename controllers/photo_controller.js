@@ -41,12 +41,19 @@ const show = async (req, res) => {
 		return
 	}
 
-    const photos = await user.related('photos').where({id:req.params.photoId}).fetch()
+	const photo = await user.related('photos').where({id:req.params.photoId}).fetch()
+	
+	if(photo.isEmpty()) {
+		res.status(401).send({
+			status: 'fail',
+			data: 'Authorization required'
+		})
+	}
 
 	res.send({
 		status: "success",
 		data: {
-			photos
+			photo
 		},
 	})
 }

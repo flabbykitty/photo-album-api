@@ -41,7 +41,14 @@ const show = async (req, res) => {
 		return
 	}
 
-    const album = await user.related('albums').where({id:req.params.albumId}).fetch({withRelated: 'photos'})
+	const album = await user.related('albums').where({id:req.params.albumId}).fetch({withRelated: 'photos'})
+	
+	if(album.isEmpty()) {
+		res.status(401).send({
+			status: 'fail',
+			data: 'Authorization required'
+		})
+	}
 
 	res.send({
 		status: "success",
@@ -136,7 +143,6 @@ const addPhotoToAlbum = async (req, res) => {
 		})
 		throw error
 	}
-
 }
 
 module.exports = {
