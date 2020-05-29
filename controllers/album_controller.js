@@ -2,7 +2,7 @@
  * Album controller
  */
 
-const {Album, User} = require('../models')
+const {Album, Photo, User} = require('../models')
 
 const {matchedData, validationResult} = require('express-validator')
 
@@ -41,12 +41,12 @@ const show = async (req, res) => {
 		return
 	}
 
-    const albums = await user.related('albums').where({id:req.params.albumId}).fetch({withRelated: 'photos'})
+    const album = await user.related('albums').where({id:req.params.albumId}).fetch({withRelated: 'photos'})
 
 	res.send({
 		status: "success",
 		data: {
-			albums
+			album
 		},
 	})
 }
@@ -86,7 +86,61 @@ const store = async (req, res) => {
 	}
 }
 
+
+/**
+ * Add a photo to an album
+ */
+const addPhotoToAlbum = async (req, res) => {
+	const errors = validationResult(req)
+	if(!errors.isEmpty()) {
+        res.status(422).send({
+            status: 'fail',
+            data: errors.array()
+		})
+		return;
+	}
+
+	const validData = matchedData(req)
+
+	// Check if the user owns both the album and the photo
+	const user = await new User({id: req.user.id}).fetch({withRelated: ['albums', 'photos']})
+
+	const album = await user.related('albums').where({id:req.params.albumId}).fetch()
+
+	const photo = await user.related('photos').where({id:validData.photo_id}).fetch()
+
+
+	if(album.isEmpty() || photo.isEmpty()) {
+		res.status(401).send({
+			status: 'fail',
+			data: "Authorization required"
+		})
+		return
+	}
+
+	try {
+		const photo = await new Photo({id: validData.photo_id})
+
+		const album = await new Album({id: req.params.albumId})
+
+		await album.photos().attach(photo)
+
+		res.status(201).send({
+			status: 'success',
+			data: null
+		})
+	} catch(error) {
+		res.status(500).send({
+			status: 'error',
+			message: 'Error thrown in database when trying to add photo to album'
+		})
+		throw error
+	}
+
+}
+
 module.exports = {
+	addPhotoToAlbum,
     index,
     show,
     store,

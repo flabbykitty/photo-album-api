@@ -20,11 +20,15 @@ const createPhotoRules = [
 
 const createAlbumRules = [
     body('title').trim().not().isEmpty(),
+]
 
+const addPhotoToAlbumRules = [
+    body('photo_id').trim().isNumeric()
 ]
 
 
 module.exports = {
+    addPhotoToAlbumRules,
     createAlbumRules,
     createPhotoRules,
     createUserRules
