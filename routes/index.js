@@ -15,8 +15,7 @@ router.get('/', (req, res) => {
 })
 
 router.post('/register', [createUserRules], userController.register)
-
-router.post('/login', [auth.basic], userController.login)
+router.post('/login', userController.login)
 
 router.use(auth.validateJWT)
 

@@ -11,17 +11,18 @@ const jwt = require('jsonwebtoken')
  * Get access token
  */
 const login = async (req, res) => {
-	if(!req.user) {
+	const user = await User.login(req.body.email, req.body.password);
+	if (!user) {
 		res.status(401).send({
 			status: 'fail',
-			data: 'Authentication required'
-		})
+			data: 'Authentication required.',
+		});
 		return
 	}
 
 	const payload = {
-		id: req.user.get('id'),
-		email: req.user.get('email'),
+		id: user.get('id'),
+		email: user.get('email'),
 	}
 
 	const token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET)
