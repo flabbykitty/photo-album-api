@@ -16,7 +16,9 @@ router.get('/', (req, res) => {
 
 router.post('/register', [createUserRules], userController.register)
 
-router.use(auth.basic)
+router.post('/login', [auth.basic], userController.login)
+
+router.use(auth.validateJWT)
 
 router.use('/photos', require('./photos_routes'))
 router.use('/albums', require('./albums_routes'))

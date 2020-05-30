@@ -5,7 +5,34 @@
 const {User} = require('../models')
 const bcrypt = require('bcrypt')
 const {matchedData, validationResult} = require('express-validator')
+const jwt = require('jsonwebtoken')
 
+/**
+ * Get access token
+ */
+const login = async (req, res) => {
+	if(!req.user) {
+		res.status(401).send({
+			status: 'fail',
+			data: 'Authentication required'
+		})
+		return
+	}
+
+	const payload = {
+		id: req.user.get('id'),
+		email: req.user.get('email'),
+	}
+
+	const token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET)
+
+	res.send({
+		status: 'success',
+		data: {
+			token
+		}
+	})
+}
 
 const register = async (req, res) => {
     const errors = validationResult(req)
@@ -47,6 +74,8 @@ const register = async (req, res) => {
     }
 }
 
+
 module.exports = {
+	login,
     register
 }
