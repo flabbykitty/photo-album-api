@@ -44,10 +44,7 @@ const show = async (req, res) => {
 	const photo = await user.related('photos').where({id:req.params.photoId}).fetch()
 	
 	if(photo.isEmpty()) {
-		res.status(401).send({
-			status: 'fail',
-			data: 'Authorization required'
-		})
+		res.sendStatus(404)
 	}
 
 	res.send({
@@ -96,7 +93,40 @@ const store = async (req, res) => {
 	}
 }
 
+
+
+/**
+ * Delete a specifis photo
+ */
+const destroy = async (req, res) => {
+
+	const user = await new User({id: req.user.id}).fetch({withRelated: 'photos'})
+
+	photo = await user.related('photos').where({id:req.params.photoId}).fetch()
+
+	if(photo.isEmpty()) {
+		res.sendStatus(404)
+		return
+	}
+	
+	photo = await new Photo({id: req.params.photoId})
+	
+	photo.albums().detach()
+		.then(async () => {
+			await new Photo({id: req.params.photoId}).destroy()
+			res.sendStatus(204)
+		})
+		.catch(() => {
+			res.status(500).send({
+				status: 'error',
+				message: 'Exception thrown in database when trying to delete a photo'
+			})
+			return
+		})
+}
+
 module.exports = {
+	destroy,
     index,
     show,
     store,

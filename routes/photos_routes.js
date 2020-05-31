@@ -7,7 +7,7 @@ const router = express.Router()
 
 const {createPhotoRules} = require('../validation/validation')
 
-const {index, show, store} = require('../controllers/photo_controller')
+const {destroy, index, show, store} = require('../controllers/photo_controller')
 
 /**
  * GET /
@@ -36,5 +36,15 @@ router.get('/:photoId', show)
  */
 
 router.post('/', createPhotoRules, store)
+
+
+/**
+ * DELETE /:photoId
+ * 
+ * Deletes a specifis photo
+ * 
+ */
+
+router.delete('/:photoId', destroy)
 
  module.exports = router

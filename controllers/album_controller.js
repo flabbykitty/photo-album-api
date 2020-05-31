@@ -44,10 +44,7 @@ const show = async (req, res) => {
 	const album = await user.related('albums').where({id:req.params.albumId}).fetch({withRelated: 'photos'})
 	
 	if(album.isEmpty()) {
-		res.status(401).send({
-			status: 'fail',
-			data: 'Authorization required'
-		})
+		res.sendStatus(404)
 	}
 
 	res.send({
