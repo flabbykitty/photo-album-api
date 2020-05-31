@@ -96,7 +96,7 @@ const store = async (req, res) => {
 
 
 /**
- * Delete a specifis photo
+ * Delete a specific photo
  */
 const destroy = async (req, res) => {
 

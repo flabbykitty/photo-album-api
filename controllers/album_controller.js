@@ -142,8 +142,40 @@ const addPhotoToAlbum = async (req, res) => {
 	}
 }
 
+
+/**
+ * Delete a specific album
+ */
+const destroy = async (req, res) => {
+
+	const user = await new User({id: req.user.id}).fetch({withRelated: 'albums'})
+
+	album = await user.related('albums').where({id:req.params.albumId}).fetch()
+
+	if(album.isEmpty()) {
+		res.sendStatus(404)
+		return
+	}
+	
+	album = await new Album({id: req.params.albumId})
+	
+	album.photos().detach()
+		.then(async () => {
+			await new Album({id: req.params.albumId}).destroy()
+			res.sendStatus(204)
+		})
+		.catch(() => {
+			res.status(500).send({
+				status: 'error',
+				message: 'Exception thrown in database when trying to delete an album'
+			})
+			return
+		})
+}
+
 module.exports = {
 	addPhotoToAlbum,
+	destroy,
     index,
     show,
     store,

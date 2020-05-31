@@ -41,7 +41,7 @@ router.post('/', createPhotoRules, store)
 /**
  * DELETE /:photoId
  * 
- * Deletes a specifis photo
+ * Deletes a specific photo
  * 
  */
 
