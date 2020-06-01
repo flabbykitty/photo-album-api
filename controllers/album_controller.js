@@ -2,7 +2,7 @@
  * Album controller
  */
 
-const {Album, Photo, User} = require('../models')
+const {Album, User} = require('../models')
 
 const {matchedData, validationResult} = require('express-validator')
 
@@ -111,28 +111,31 @@ const addPhotoToAlbum = async (req, res) => {
 
 	const album = await user.related('albums').where({id:req.params.albumId}).fetch()
 
-	const photo = await user.related('photos').where({id:validData.photo_id}).fetch()
+
+	let photos = null
+
+	if(!Array.isArray(validData.photo_id)) {
+		photos = await user.related('photos').where({id: validData.photo_id}).fetch()
+	} else {
+		photos = await user.related('photos').where("id", "IN", validData.photo_id).fetch()
+	}
 
 
-	if(album.isEmpty() || photo.isEmpty()) {
-		res.status(401).send({
-			status: 'fail',
-			data: "Authorization required"
-		})
+	if(album.isEmpty() || photos.isEmpty()) {
+		res.sendStatus(404)
 		return
 	}
 
-	try {
-		const photo = await new Photo({id: validData.photo_id})
 
+	try {
 		const album = await new Album({id: req.params.albumId})
 
-		await album.photos().attach(photo)
-
-		res.status(201).send({
-			status: 'success',
-			data: null
+		await photos.forEach(async p => {
+			await album.photos().attach(p.id)
 		})
+
+		res.sendStatus(201)
+
 	} catch(error) {
 		res.status(500).send({
 			status: 'error',

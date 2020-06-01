@@ -23,7 +23,12 @@ const createAlbumRules = [
 ]
 
 const addPhotoToAlbumRules = [
-    body('photo_id').trim().isNumeric()
+    body('photo_id').custom(value => {
+        if(Array.isArray(value) || Number.isInteger(value)) {
+            return true
+        }
+        return false
+    })
 ]
 
 
