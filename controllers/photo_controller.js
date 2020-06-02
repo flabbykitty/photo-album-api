@@ -100,7 +100,13 @@ const store = async (req, res) => {
  */
 const destroy = async (req, res) => {
 
-	const user = await new User({id: req.user.id}).fetch({withRelated: 'photos'})
+	let user = null
+	try {
+		user = await new User({id: req.user.id}).fetch({withRelated: 'photos'})
+	} catch(error) {
+		res.status(404)
+		return
+	}
 
 	photo = await user.related('photos').where({id:req.params.photoId}).fetch()
 

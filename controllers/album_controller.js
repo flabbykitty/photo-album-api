@@ -107,10 +107,16 @@ const addPhotoToAlbum = async (req, res) => {
 	const validData = matchedData(req)
 
 	// Check if the user owns both the album and the photo
-	const user = await new User({id: req.user.id}).fetch({withRelated: ['albums', 'photos']})
-
-	const album = await user.related('albums').where({id:req.params.albumId}).fetch()
-
+	let album = null
+	try {
+		const user = await new User({id: req.user.id}).fetch({withRelated: ['albums', 'photos']})
+	
+		album = await user.related('albums').where({id:req.params.albumId}).fetch()
+		
+	} catch(error) {
+		res.status(404)
+		return
+	}
 
 	let photos = null
 
@@ -151,7 +157,13 @@ const addPhotoToAlbum = async (req, res) => {
  */
 const destroy = async (req, res) => {
 
-	const user = await new User({id: req.user.id}).fetch({withRelated: 'albums'})
+	let user = null
+	try {
+		user = await new User({id: req.user.id}).fetch({withRelated: 'albums'})
+	} catch(error) {
+		res.status(404)
+		return
+	}
 
 	album = await user.related('albums').where({id:req.params.albumId}).fetch()
 
