@@ -17,7 +17,7 @@ const index = async (req, res) => {
 	} catch(error) {
 		res.status(404)
 		return
-    }
+	}
     
 	const photos = user.related('photos')
 
@@ -114,7 +114,10 @@ const destroy = async (req, res) => {
 	photo.albums().detach()
 		.then(async () => {
 			await new Photo({id: req.params.photoId}).destroy()
-			res.sendStatus(204)
+			res.status(204).send({
+				status: 'success',
+				data: null
+			})
 		})
 		.catch(() => {
 			res.status(500).send({

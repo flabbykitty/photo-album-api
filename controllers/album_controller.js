@@ -165,7 +165,10 @@ const destroy = async (req, res) => {
 	album.photos().detach()
 		.then(async () => {
 			await new Album({id: req.params.albumId}).destroy()
-			res.sendStatus(204)
+			res.status(204).send({
+				status: 'success',
+				data: null
+			})
 		})
 		.catch(() => {
 			res.status(500).send({
